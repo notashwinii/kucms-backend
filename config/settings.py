@@ -48,8 +48,11 @@ INSTALLED_APPS = [
     "drf_spectacular",
     "corsheaders",
     "drf_yasg",
+    "rest_framework.authtoken",
     # Local apps
-    "users",
+    "kucms",
+    
+   
    
 ]
 
@@ -63,10 +66,11 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "corsheaders.middleware.CorsMiddleware",
+    'django.middleware.common.CommonMiddleware',
     
 ]
 
-ROOT_URLCONF = "kucms.urls"
+ROOT_URLCONF = "config.urls"
 
 TEMPLATES = [
     {
@@ -84,7 +88,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "kucms.wsgi.application"
+WSGI_APPLICATION = "config.wsgi.application"
 
 
 # Database
@@ -105,7 +109,7 @@ DATABASES = {
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
 #
-AUTH_USER_MODEL = "users.CustomUser"
+AUTH_USER_MODEL = "kucms.User"
 
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -134,13 +138,21 @@ AUTH_PASSWORD_VALIDATORS = [
 #
 # }
 REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework_simplejwt.authentication.JWTAuthentication",
-    ),
-    "DEFAULT_SCHEMA_CLASS": "drf_yasg.generators.OpenAPISchemaGenerator",
-    "DEFAULT_SCHEMA_CLASS": "rest_framework.schemas.AutoSchema",
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10,
 }
 
+
+# Add media settings if not already present
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
@@ -167,3 +179,7 @@ STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",  # Frontend URL in development
+   
+]
